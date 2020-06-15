@@ -4,6 +4,7 @@ Language Features:
 
 
 Compiler Features:
+ * Yul Optimizer: LoopInvariantCodeMotion can move ``EXTCODEHASH``, ``EXTCODESIZE`` and ``SLOAD`` if the loop does not invalidates the storage.
 
 
 Bugfixes:
