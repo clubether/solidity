@@ -259,7 +259,6 @@ wasm::Expression WasmCodeTransform::operator()(ForLoop const& _for)
 
 	wasm::Loop loop;
 	loop.labelName = newLabel();
-	loop.statements = visit(_for.pre.statements);
 	loop.statements.emplace_back(wasm::BranchIf{wasm::Label{breakLabel}, make_unique<wasm::Expression>(
 		wasm::BuiltinCall{eqz_instruction.str(), make_vector<wasm::Expression>(
 			visitReturnByValue(*_for.condition)
@@ -269,7 +268,13 @@ wasm::Expression WasmCodeTransform::operator()(ForLoop const& _for)
 	loop.statements += visit(_for.post.statements);
 	loop.statements.emplace_back(wasm::Branch{wasm::Label{loop.labelName}});
 
-	return { wasm::Block{breakLabel, make_vector<wasm::Expression>(move(loop))} };
+	if (_for.pre.statements.empty())
+		return wasm::Block{breakLabel, make_vector<wasm::Expression>(move(loop))};
+
+	std::vector<wasm::Expression> result;
+	result += visit(_for.pre.statements);
+	result += make_vector<wasm::Expression>(move(loop));
+	return wasm::Block{breakLabel, move(result)};
 }
 
 wasm::Expression WasmCodeTransform::operator()(Break const&)
