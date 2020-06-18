@@ -15,8 +15,8 @@
 	along with solidity.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @author Christian <c@ethdev.com>
- * @date 2014
+ * @author ClubEther
+ * @date 2020
  * Scope - object that holds declaration of names.
  */
 
