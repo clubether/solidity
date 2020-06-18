@@ -23,6 +23,20 @@
 
 namespace solidity::frontend::test
 {
+
+/**
+ * A map for registering source names that also contains the last source name in a test case.
+ */
+struct SourceMap
+{
+	std::map<std::string, std::string> m_sourceMap;
+	std::string m_lastSourceName;
+	std::string last()
+	{
+		return m_lastSourceName;
+	}
+};
+
 /**
  * A reader for test case data file, which parses source, settings and (optionally) simple expectations.
  */
@@ -32,7 +46,7 @@ public:
 	TestCaseReader() = default;
 	explicit TestCaseReader(std::string const& _filename);
 
-	std::map<std::string, std::string> const& sources() { return m_sources; }
+	SourceMap const& sources() { return m_sources; }
 	std::string const& source();
 	std::size_t lineNumber() { return m_lineNumber; }
 	std::map<std::string, std::string> const& settings() { return m_settings; }
@@ -47,11 +61,11 @@ public:
 	void ensureAllSettingsRead() const;
 
 private:
-	std::pair<std::map<std::string, std::string>, std::size_t> parseSourcesAndSettingsWithLineNumber(std::istream& _file);
+	std::pair<SourceMap, std::size_t> parseSourcesAndSettingsWithLineNumber(std::istream& _file);
 	static std::string parseSimpleExpectations(std::istream& _file);
 
 	std::ifstream m_file;
-	std::map<std::string, std::string> m_sources;
+	SourceMap m_sources;
 	std::size_t m_lineNumber = 0;
 	std::map<std::string, std::string> m_settings;
 	std::map<std::string, std::string> m_unreadSettings; ///< tracks which settings are left unread

@@ -60,7 +60,7 @@ CommonSyntaxTest::CommonSyntaxTest(string const& _filename, langutil::EVMVersion
 	EVMVersionRestrictedTestCase(_filename),
 	m_evmVersion(_evmVersion)
 {
-	m_sources = m_reader.sources();
+	m_sources = m_reader.sources().m_sourceMap;
 	m_expectations = parseExpectations(m_reader.stream());
 }
 
