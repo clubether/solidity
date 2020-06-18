@@ -44,7 +44,11 @@ SemanticTest::SemanticTest(string const& _filename, langutil::EVMVersion _evmVer
 	EVMVersionRestrictedTestCase(_filename),
 	m_enforceViaYul(enforceViaYul)
 {
-	m_source = m_reader.source();
+	m_source = m_reader.sources().m_sourceMap;
+	m_lastSourceName = m_reader.sources().m_lastSourceName;
+	string const preamble = "pragma solidity >=0.0;\n// SPDX-License-Identifier: GPL-3.0\n";
+	for (auto& source: m_source)
+		source.second = preamble + source.second;
 	m_lineOffset = m_reader.lineNumber();
 
 	string choice = m_reader.stringSetting("compileViaYul", "false");
@@ -241,7 +245,7 @@ TestCase::TestResult SemanticTest::run(ostream& _stream, string const& _linePref
 
 void SemanticTest::printSource(ostream& _stream, string const& _linePrefix, bool) const
 {
-	stringstream stream(m_source);
+	stringstream stream(m_source.at(m_lastSourceName));
 	string line;
 	while (getline(stream, line))
 		_stream << _linePrefix << line << endl;

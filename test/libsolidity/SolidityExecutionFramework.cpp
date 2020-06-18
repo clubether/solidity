@@ -32,21 +32,27 @@ using namespace solidity::frontend::test;
 using namespace std;
 
 bytes SolidityExecutionFramework::compileContract(
-	string const& _sourceCode,
+	std::map<std::string, std::string> const& _sourceCode,
 	string const& _contractName,
 	map<string, Address> const& _libraryAddresses
 )
 {
-	// Silence compiler version warning
-	std::string sourceCode = "pragma solidity >=0.0;\n";
-	if (
-		solidity::test::CommonOptions::get().useABIEncoderV2 &&
-		_sourceCode.find("pragma experimental ABIEncoderV2;") == std::string::npos
-	)
-		sourceCode += "pragma experimental ABIEncoderV2;\n";
-	sourceCode += _sourceCode;
+	map<string, string> sourceCodeMap = _sourceCode;
+	for_each(
+		sourceCodeMap.begin(),
+		sourceCodeMap.end(),
+		[](pair<const string, string>& p)
+		{
+			if (
+				solidity::test::CommonOptions::get().useABIEncoderV2 &&
+				p.second.find("pragma experimental ABIEncoderV2;") == std::string::npos
+			)
+				p.second = "pragma experimental ABIEncoderV2;\n" + p.second;
+		}
+	);
+
 	m_compiler.reset();
-	m_compiler.setSources({{"", sourceCode}});
+	m_compiler.setSources(sourceCodeMap);
 	m_compiler.setLibraries(_libraryAddresses);
 	m_compiler.setRevertStringBehaviour(m_revertStrings);
 	m_compiler.setEVMVersion(m_evmVersion);

@@ -61,7 +61,7 @@ public:
 	virtual ~ExecutionFramework() = default;
 
 	virtual bytes const& compileAndRunWithoutCheck(
-		std::string const& _sourceCode,
+		std::map<std::string, std::string> const& _sourceCode,
 		u256 const& _value = 0,
 		std::string const& _contractName = "",
 		bytes const& _arguments = bytes(),
@@ -69,7 +69,7 @@ public:
 	) = 0;
 
 	bytes const& compileAndRun(
-		std::string const& _sourceCode,
+		std::map<std::string, std::string> const& _sourceCode,
 		u256 const& _value = 0,
 		std::string const& _contractName = "",
 		bytes const& _arguments = bytes(),
